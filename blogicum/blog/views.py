@@ -36,6 +36,8 @@ class PostDetailView(UserPassesTestMixin, DetailView):
     context_object_name = 'post'
 
     def test_func(self):
+        # проверяем, является ли текущий
+        # пользователь автором редактируемого поста
         post = self.get_object()
         return self.request.user == post.author or post.is_published
 
@@ -59,28 +61,29 @@ class PostDetailView(UserPassesTestMixin, DetailView):
 
 class CategoryPost(ListView):
     """Отображения списка категорий."""
-    template_name = 'blog/category.html'
     model = Post
+    template_name = 'blog/category.html'
     context_object_name = 'page_obj'
     paginate_by = 10
 
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        category_slug = self.kwargs['slug']
+        self.category = get_object_or_404(
+            Category,
+            slug=category_slug,
+            is_published=True
+        )
+
     def get_queryset(self):
-        category_slug = self.kwargs.get('slug')
-        category = get_object_or_404(Category,
-                                     is_published=True,
-                                     slug=category_slug)
-        return category.post_set.filter(
+        return self.category.post_set.filter(
             pub_date__lte=timezone.now(),
             is_published=True
         ).order_by('-pub_date')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category_slug = self.kwargs.get('slug')
-        category = get_object_or_404(Category,
-                                     is_published=True,
-                                     slug=category_slug)
-        context['category'] = category
+        context['category'] = self.category
         return context
 
 
@@ -120,6 +123,10 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProfileUpdateForm
     template_name = 'blog/user.html'
 
+    def check_user_authorization(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
     def get_object(self, *args, **kwargs):
         return self.request.user
 
@@ -157,6 +164,8 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     pk_url_kwarg = 'post_id'
 
     def test_func(self):
+        # проверяем, является ли текущий
+        # пользователь автором редактируемого поста
         post = self.get_object()
         return self.request.user == post.author
 
@@ -186,7 +195,6 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
     template_name = 'blog/comment.html'
-    form = CommentForm
     pk_url_kwarg = 'post_id'
 
     def get_context_data(self, **kwargs):

@@ -6,7 +6,7 @@ from .models import Category, Location, Post, Comment, User
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('title', 'description',)
 
 
 class LocationForm(forms.ModelForm):

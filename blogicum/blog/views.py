@@ -99,19 +99,13 @@ class ProfileListView(ListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs['username'])
         posts = user.post_set.all().order_by('-pub_date')
-
-        self.extra_context = {
-            'profile': user,
-            'user': user,
-        }
         return posts
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        page_number = self.request.GET.get('page')
-        context['profile'] = get_object_or_404(
-            User, username=self.kwargs['username'])
-        context['page_number'] = page_number
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        context['profile'] = user
+        context['page_number'] = self.request.GET.get('page')
         return context
 
 

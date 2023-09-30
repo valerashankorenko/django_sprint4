@@ -1,5 +1,4 @@
 from django import forms
-
 from .models import Category, Location, Post, Comment, User
 
 
@@ -12,7 +11,7 @@ class CategoryForm(forms.ModelForm):
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        fields = '__all__'
+        fields = ('name',)
 
 
 class PostForm(forms.ModelForm):
@@ -36,4 +35,14 @@ class ProfileUpdateForm(forms.ModelForm):
     """
     class Meta:
         model = User
-        fields = '__all__'
+        fields = (
+            'username',
+            'password',
+            'email',
+            'first_name',
+            'last_name',
+            'date_joined',
+        )
+        widgets = {
+            'password': forms.PasswordInput()
+        }

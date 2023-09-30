@@ -101,9 +101,9 @@ class Comment(models.Model):
     created_at = models.DateTimeField(
         'Дата и время публикации комментария',
         auto_now_add=True)
-    author = models.ForeignKey(User,
-                               on_delete=models.CASCADE,
-                               verbose_name='Автор комментария')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        verbose_name='Автор комментария')
 
     class Meta:
         ordering = ('created_at',)

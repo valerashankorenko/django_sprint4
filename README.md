@@ -13,6 +13,7 @@ E-mail:valerashankorenko@yandex.by<br/>
 ## Стек технологий
 - [Python](https://www.python.org/)
 - [Django](https://www.djangoproject.com/)
+- [Bootstrap](https://getbootstrap.com/)
 - [SQLite](https://www.sqlite.org/)
 
 ## Как запустить проект:
